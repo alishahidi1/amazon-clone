@@ -9,8 +9,6 @@ function addTodo(){
     
     todoList.push({name, dueDate});
 
-    console.log(todoList);
-
     inputName.value = '';
     inputDate.value = '';
 }
@@ -20,13 +18,13 @@ function renderTodoList(){
 
     for (let i = 0; i < todoList.length; i++){
         const html = `
-            <p>
-                ${todoList[i].name} ${todoList[i].dueDate} 
-                <button onclick="
-                    todoList.splice(${i}, 1);
-                    renderTodoList();
-                ">Delete</button>
-            </p>`;
+            <div>${todoList[i].name}</div>
+            <div>${todoList[i].dueDate} </div>
+            <button class="delete-button" onclick="
+                todoList.splice(${i}, 1);
+                renderTodoList();
+            ">Delete</button>
+            `;
         todoListHTML += html;
     }
     document.querySelector('.js-todo-list').innerHTML = todoListHTML;
