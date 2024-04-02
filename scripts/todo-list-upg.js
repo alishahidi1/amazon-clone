@@ -41,14 +41,14 @@ function renderTodoList(){
     document.querySelector('.js-todo-list').innerHTML = todoListHTML;
 }
 
+document.querySelector('.js-add-button').addEventListener('click', () => {
+    addTodo(); 
+    renderTodoList();
+});
+
 document.body.addEventListener('keydown',(event) => {
     if(event.key === 'Enter'){
         addTodo(); 
         renderTodoList();
     }
-});
-
-document.querySelector('.js-add-button').addEventListener('click',() => {
-    addTodo(); 
-    renderTodoList();
 });
