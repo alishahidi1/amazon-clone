@@ -20,10 +20,7 @@ function renderTodoList(){
         const html = `
             <div>${todoElement.name}</div>
             <div>${todoElement.dueDate} </div>
-            <button class="delete-button" onclick="
-                todoList.splice(${index}, 1);
-                renderTodoList();
-            ">Delete</button>
+            <button class="delete-button" >Delete</button>
             `;
         todoListHTML += html;
     });
@@ -39,6 +36,13 @@ function renderTodoList(){
     //     todoListHTML += html;
     // }
     document.querySelector('.js-todo-list').innerHTML = todoListHTML;
+
+    document.querySelectorAll('.delete-button').forEach((deleteButton, index) => {
+        deleteButton.addEventListener('click', () => {
+            todoList.splice(index, 1);
+            renderTodoList();
+        });
+    });
 }
 
 document.querySelector('.js-add-button').addEventListener('click', () => {
