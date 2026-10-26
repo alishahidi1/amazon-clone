@@ -24,18 +24,15 @@ jobs:
           script: |
             const body = context.payload.comment.body || ''
             const match = body.match(/^\/ask-copilot:\s*(.*)$/s)
-
             if (!match) {
               core.setFailed('No question found after /ask-copilot:')
               return
             }
-
             const question = match[1].trim()
             if (!question) {
               core.setFailed('Question is empty.')
               return
             }
-
             core.setOutput('question', question)
 
       - name: Install GitHub CLI
@@ -45,13 +42,18 @@ jobs:
             sudo apt-get install -y gh
           fi
 
-      - name: Verify Copilot extension
+      - name: Login and verify GitHub Copilot auth
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
+        shell: bash
         run: |
+          unset GH_TOKEN
+          echo "${{ secrets.COPILOT_TOKEN }}" | gh auth login --with-token --hostname github.com
+          gh auth status
           gh extension install github/gh-copilot || true
           gh extension list
           gh copilot --help || true
+          copilot --help || true
 
       - name: Ask Copilot and save answer
         id: answer
@@ -60,11 +62,13 @@ jobs:
         shell: bash
         run: |
           QUESTION='${{ steps.parse.outputs.question }}'
-          ANSWER="$(gh copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
+          ANSWER="$(copilot -p "$QUESTION" 2>/tmp/copilot.err || gh copilot suggest --prompt "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
+
           if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
-            echo "Copilot CLI did not return a usable answer."
+            echo "Copilot auth or CLI failed."
             exit 1
           fi
+
           printf '%s' "$ANSWER" > /tmp/copilot-answer.txt
 
       - name: Post answer as PR comment
