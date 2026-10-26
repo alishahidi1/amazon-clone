@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           QUESTION='${{ steps.parse.outputs.question }}'
-          ANSWER="$(gh copilot -p "$QUESTION" 2>/tmp/copilot.err || gh copilot suggest --prompt "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
+          ANSWER="$(gh copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
 
           if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
             echo "Copilot auth or CLI failed."
