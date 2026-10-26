@@ -42,7 +42,7 @@ jobs:
             sudo apt-get install -y gh
           fi
 
-      - name: Login and verify GitHub Copilot auth
+      - name: Login and verify GitHub auth
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
         shell: bash
@@ -50,10 +50,7 @@ jobs:
           unset GH_TOKEN
           echo "${{ secrets.COPILOT_TOKEN }}" | gh auth login --with-token --hostname github.com
           gh auth status
-          gh extension install github/gh-copilot || true
-          gh extension list
-          gh copilot --help || true
-          copilot --help || true
+          gh copilot --help
 
       - name: Ask Copilot and save answer
         id: answer
@@ -65,7 +62,7 @@ jobs:
           ANSWER="$(gh copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
 
           if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
-            echo "Copilot auth or CLI failed."
+            echo "Copilot CLI did not return a usable answer."
             exit 1
           fi
 
