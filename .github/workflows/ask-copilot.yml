@@ -45,11 +45,13 @@ jobs:
             sudo apt-get install -y gh
           fi
 
-      - name: Install Copilot CLI extension
+      - name: Verify Copilot extension
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
         run: |
           gh extension install github/gh-copilot || true
+          gh extension list
+          gh copilot --help || true
 
       - name: Ask Copilot and save answer
         id: answer
@@ -58,7 +60,7 @@ jobs:
         shell: bash
         run: |
           QUESTION='${{ steps.parse.outputs.question }}'
-          ANSWER="$(copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
+          ANSWER="$(gh copilot suggest --prompt "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
           if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
             echo "Copilot CLI did not return a usable answer."
             exit 1
