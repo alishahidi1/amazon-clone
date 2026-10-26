@@ -47,8 +47,8 @@ jobs:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
         shell: bash
         run: |
-          unset GH_TOKEN
-          echo "${{ secrets.COPILOT_TOKEN }}" | gh auth login --with-token --hostname github.com
+          unset COPILOT_GITHUB_TOKEN
+          echo "${{ secrets.COPILOT_GITHUB_TOKEN}}" | gh auth login --with-token --hostname github.com
           gh auth status
           gh copilot --help
 
