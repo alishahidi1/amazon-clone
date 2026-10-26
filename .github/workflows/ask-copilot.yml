@@ -55,17 +55,15 @@ jobs:
       - name: Ask Copilot and save answer
         id: answer
         env:
-          GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         shell: bash
         run: |
           QUESTION='${{ steps.parse.outputs.question }}'
-          ANSWER="$(gh copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
-
+          ANSWER="$(copilot -p "$QUESTION" 2>/tmp/copilot.err || cat /tmp/copilot.err || true)"
           if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
             echo "Copilot CLI did not return a usable answer."
             exit 1
           fi
-
           printf '%s' "$ANSWER" > /tmp/copilot-answer.txt
 
       - name: Post answer as PR comment
