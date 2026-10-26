@@ -45,13 +45,9 @@ jobs:
             sudo apt-get install -y gh
           fi
 
-      - name: Authenticate gh
+      - name: Install Copilot CLI extension
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
-        run: |
-          printf '%s' "$GH_TOKEN" | gh auth login --with-token
-
-      - name: Install Copilot CLI extension
         run: |
           gh extension install github/gh-copilot || true
 
